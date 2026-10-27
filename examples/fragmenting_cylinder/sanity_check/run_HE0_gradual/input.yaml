@@ -1,0 +1,76 @@
+Peridigm:
+
+  Discretization:
+      Type: "Text File"
+      Input Mesh File: "fragmenting_cylinder.txt"
+
+  Materials:
+      My Material:
+          Material Model: "Isotropic Hardening Hypoelastic Correspondence"
+          Density: 7800.0
+          Bulk Modulus: 130.0e9
+          Shear Modulus: 78.0e9
+          Hardening Rule: "Saturation type exponential"
+          Initial Yield Stress: 9.77e8
+          Saturated Yield Stress: 1.35e9
+          Exponential Constant: 22.0
+          Linear Constant: 2.0e7
+          Enable Gradual Force Bearing Degradation: true
+          Actual Horizon: 0.01043655  # starting value = Block Horizon; adjust if shape tensor looks ill-conditioned
+
+  Damage Models:
+      My Damage Model:
+          Damage Model: "Brozzo"
+          Damage Parameter 1: 3.5
+          Damage Parameter 2: 0.99
+          Threshold Damage: 0.85
+          Critical Damage To Neglect Material Point: 0.999
+
+  Blocks:
+      My Block:
+          Block Names: "block_1"
+          Material: "My Material"
+          Damage Model: "My Damage Model"
+          Horizon: 0.01043655
+
+  Boundary Conditions:
+      Node Set One: "fragmenting_cylinder_nodeset.txt"
+      Initial Velocity X:
+          Type: "Initial Velocity"
+          Node Set: "Node Set One"
+          Coordinate: "x"
+          Value: "(200 - 50*((z/0.05)-1)^2)*cos(atan2(y,x))"
+      Initial Velocity Y:
+          Type: "Initial Velocity"
+          Node Set: "Node Set One"
+          Coordinate: "y"
+          Value: "(200 - 50*((z/0.05)-1)^2)*sin(atan2(y,x))"
+      Initial Velocity Z:
+          Type: "Initial Velocity"
+          Node Set: "Node Set One"
+          Coordinate: "z"
+          Value: "(100*((z/0.05)-1))"
+
+  Solver:
+      Initial Time: 0.0
+      Final Time: 2.5e-4
+      Verlet:
+          Safety Factor: 0.3
+
+  Output:
+      Output File Type: "ExodusII"
+      Output Filename: "fragmenting_cylinder_sanity_check_HE0_gradual"
+      Output Frequency: 5
+      Output Variables:
+          Proc_Num: true
+          Displacement: true
+          Velocity: true
+          Acceleration: true
+          Force_Density: true
+          Force: true
+          Element_Id: true
+          Weighted_Volume: true
+          Damage: true
+          Radius: true
+          Broken_Bond_Volume_Averaged: true
+          Flying_Point_Flag: true
